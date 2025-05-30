@@ -4,6 +4,7 @@ import Header from './components/Header';
 import BoltBanner from './components/BoltBanner';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
+import Leaderboard from './pages/Leaderboard';
 import useAuthStore from './store/useAuthStore';
 
 function App() {
@@ -51,7 +52,7 @@ function App() {
             />
             <Route 
               path="/leaderboard" 
-              element={<div className="container mx-auto p-8">Leaderboard Page (Coming Soon)</div>} 
+              element={<Leaderboard />} 
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
