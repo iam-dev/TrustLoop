@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Trophy, 
@@ -8,7 +8,7 @@ import {
   Crown,
   Users
 } from 'lucide-react';
-import Avatar from '../components/ui/Avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/Avatar';
 import Button from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { formatAddress } from '../lib/utils';
@@ -96,7 +96,7 @@ const mockLeaderboard: LeaderboardEntry[] = [
 
 const Leaderboard: React.FC = () => {
   const navigate = useNavigate();
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(mockLeaderboard);
+  const [leaderboard] = useState(mockLeaderboard);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const refreshLeaderboard = async () => {
@@ -214,12 +214,12 @@ const Leaderboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <Avatar
-                            src={entry.avatarUrl}
-                            fallback={entry.username.substring(0, 2)}
-                            size="sm"
-                            className="mr-3"
-                          />
+                          <Avatar className="h-8 w-8 mr-3">
+                            {entry.avatarUrl && <AvatarImage src={entry.avatarUrl} alt={entry.username} />}
+                            <AvatarFallback>
+                              {entry.username.substring(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
                           <span className="font-medium">{entry.username}</span>
                         </div>
                       </td>

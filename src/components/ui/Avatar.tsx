@@ -1,60 +1,66 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 
-interface AvatarProps {
-  src?: string;
-  alt?: string;
-  fallback?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   className?: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({
-  src,
-  alt = 'Avatar',
-  fallback,
-  size = 'md',
-  className,
-}) => {
-  const [hasError, setHasError] = React.useState(false);
-  
-  const sizeClasses = {
-    sm: 'h-8 w-8 text-xs',
-    md: 'h-10 w-10 text-sm',
-    lg: 'h-12 w-12 text-base',
-    xl: 'h-16 w-16 text-lg',
-  };
+interface AvatarFallbackProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
+  children?: React.ReactNode;
+}
 
-  const getFallbackLetters = () => {
-    if (!fallback) return '?';
-    return fallback
-      .split(' ')
-      .map(word => word[0])
-      .slice(0, 2)
-      .join('')
-      .toUpperCase();
-  };
-
+const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(({ className, children, ...props }, ref) => {
   return (
     <div
+      ref={ref}
       className={cn(
-        'relative rounded-full overflow-hidden bg-primary-100 flex items-center justify-center text-primary-700 font-medium',
-        sizeClasses[size],
+        'relative flex h-12 w-12 shrink-0 overflow-hidden rounded-full',
         className
       )}
+      {...props}
     >
-      {src && !hasError ? (
-        <img
-          src={src}
-          alt={alt}
-          className="h-full w-full object-cover"
-          onError={() => setHasError(true)}
-        />
-      ) : (
-        <span>{getFallbackLetters()}</span>
-      )}
+      {children}
     </div>
   );
-};
+});
 
-export default Avatar;
+Avatar.displayName = 'Avatar';
+
+const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(({ className, src, alt = '', ...props }, ref) => {
+  return (
+    <img
+      ref={ref}
+      src={src}
+      alt={alt}
+      className={cn('aspect-square h-full w-full object-cover', className)}
+      {...props}
+    />
+  );
+});
+
+AvatarImage.displayName = 'AvatarImage';
+
+const AvatarFallback = React.forwardRef<HTMLDivElement, AvatarFallbackProps>(({ className, children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'flex h-full w-full items-center justify-center rounded-full bg-surface-100 text-surface-900 font-medium',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
+
+AvatarFallback.displayName = 'AvatarFallback';
+
+export { Avatar, AvatarImage, AvatarFallback };
