@@ -12,7 +12,7 @@ import TaskCard, { TaskProps } from '../components/TaskCard';
 import { Card, CardContent } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
-import Avatar from '../components/ui/Avatar';
+import { Avatar, AvatarFallback } from '../components/ui/Avatar';
 import { formatAddress, formatReward } from '../lib/utils';
 
 interface DashboardProps {
@@ -89,7 +89,7 @@ const MOCK_TASKS: TaskProps[] = [
 const Dashboard: React.FC<DashboardProps> = ({ address, isConnected }) => {
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [tasks, setTasks] = useState(MOCK_TASKS);
+  const [tasks] = useState<TaskProps[]>(MOCK_TASKS);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleTaskSelect = (id: string) => {
@@ -134,10 +134,11 @@ const Dashboard: React.FC<DashboardProps> = ({ address, isConnected }) => {
           <Card className="lg:col-span-2">
             <CardContent className="p-6">
               <div className="flex items-center">
-                <Avatar 
-                  size="lg"
-                  fallback={address?.substring(0, 2) || 'AL'}
-                />
+                <Avatar className="h-12 w-12">
+                  <AvatarFallback>
+                    {address?.substring(0, 2) || 'AL'}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="ml-4">
                   <h2 className="text-xl font-semibold">Welcome back!</h2>
                   <p className="text-surface-500">

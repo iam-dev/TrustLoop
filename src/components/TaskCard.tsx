@@ -1,5 +1,5 @@
-import React from 'react';
-import { Play, Award, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, Award, ChevronRight, Check, Loader } from 'lucide-react';
 import { 
   Card, 
   CardHeader, 
@@ -10,6 +10,9 @@ import {
 } from './ui/Card';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
+import { createTaskVerificationTxn, signTransaction, submitAndMonitorTransaction, TransactionStatus } from '../lib/transactionUtils';
+import { toast } from '../lib/toast';
+import { useWallet } from '@txnlab/use-wallet';
 
 export interface TaskProps {
   id: string;
@@ -22,6 +25,7 @@ export interface TaskProps {
   completed?: boolean;
   locked?: boolean;
   onSelect: (id: string) => void;
+  onCompleted?: (id: string) => void;
 }
 
 const TaskCard: React.FC<TaskProps> = ({
@@ -35,21 +39,90 @@ const TaskCard: React.FC<TaskProps> = ({
   completed,
   locked,
   onSelect,
+  onCompleted,
 }) => {
+  const [txStatus, setTxStatus] = useState<TransactionStatus | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { activeAccount } = useWallet();
   const taskIcons = {
     video: <Play size={18} className="text-primary-600" />,
     meme: <span className="text-xl">🎭</span>,
     tutorial: <span className="text-xl">📚</span>,
   };
 
-  const difficultyVariants = {
+  const difficultyVariants: Record<string, 'success' | 'warning' | 'error' | 'default' | 'primary' | 'secondary'> = {
     easy: 'success',
     medium: 'warning',
     hard: 'error',
   };
 
+  // Handle verify task completion on blockchain
+  const handleVerifyCompletion = async () => {
+    if (!activeAccount || !activeAccount.address) {
+      toast.error('Please connect your wallet first');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setTxStatus('pending');
+
+      // Create transaction for task verification
+      const txn = await createTaskVerificationTxn(activeAccount.address, id);
+      
+      // Sign transaction with user's wallet
+      const signedTxn = await signTransaction(txn, activeAccount.address);
+      
+      // Submit and monitor transaction
+      await submitAndMonitorTransaction(signedTxn, (update) => {
+        setTxStatus(update.status);
+        
+        if (update.status === 'confirmed') {
+          toast.success('Task completion verified on blockchain!');
+          if (onCompleted) onCompleted(id);
+        } else if (update.status === 'failed') {
+          toast.error('Transaction failed: ' + update.message);
+        }
+      });
+    } catch (error) {
+      console.error('Error verifying task completion:', error);
+      toast.error('Failed to verify task: ' + (error instanceof Error ? error.message : String(error)));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Determine button text and icon based on status
+  const getButtonContent = () => {
+    if (loading) {
+      return (
+        <>
+          <Loader size={16} className="animate-spin mr-1" />
+          {txStatus === 'pending' ? 'Preparing...' : 
+           txStatus === 'confirming' ? 'Confirming...' : 'Processing...'}
+        </>
+      );
+    }
+    
+    if (completed) {
+      return (
+        <>
+          <Check size={16} className="mr-1" />
+          Completed
+        </>
+      );
+    }
+    
+    return (
+      <>
+        Start
+        <ChevronRight size={16} className="ml-1" />
+      </>
+    );
+  };
+
   return (
-    <Card hover onClick={() => !locked && onSelect(id)}>
+    <Card hover onClick={() => !locked && !loading && onSelect(id)}>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div className="flex items-center space-x-2">
@@ -95,10 +168,13 @@ const TaskCard: React.FC<TaskProps> = ({
         </div>
         <Button 
           size="sm" 
-          rightIcon={<ChevronRight size={16} />}
-          disabled={locked}
+          disabled={locked || loading}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent card onClick from firing
+            if (!completed) handleVerifyCompletion();
+          }}
         >
-          Start
+          {getButtonContent()}
         </Button>
       </CardFooter>
     </Card>
