@@ -4,6 +4,7 @@ import Header from './components/Header';
 import BoltBanner from './components/BoltBanner';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
+import Marketplace from './pages/Marketplace';
 import Leaderboard from './pages/Leaderboard';
 import useAuthStore from './store/useAuthStore';
 
@@ -43,6 +44,12 @@ function App() {
             <Route 
               path="/dashboard" 
               element={<Dashboard isConnected={isConnected} address={address} />} 
+            />
+            <Route 
+              path="/marketplace" 
+              element={
+                isConnected ? <Marketplace /> : <Navigate to="/" />
+              } 
             />
             <Route 
               path="/rewards" 
