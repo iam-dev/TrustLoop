@@ -12,7 +12,7 @@ import Badge from './ui/Badge';
 import Button from './ui/Button';
 import { createTaskVerificationTxn, signTransaction, submitAndMonitorTransaction, TransactionStatus } from '../lib/transactionUtils';
 import { toast } from '../lib/toast';
-import { useWallet } from '@txnlab/use-wallet';
+import { useWallet } from '@txnlab/use-wallet-react';
 
 export interface TaskProps {
   id: string;
@@ -43,7 +43,7 @@ const TaskCard: React.FC<TaskProps> = ({
 }) => {
   const [txStatus, setTxStatus] = useState<TransactionStatus | null>(null);
   const [loading, setLoading] = useState(false);
-  const { activeAccount } = useWallet();
+  const { activeAddress } = useWallet();
   const taskIcons = {
     video: <Play size={18} className="text-primary-600" />,
     meme: <span className="text-xl">🎭</span>,
@@ -58,7 +58,7 @@ const TaskCard: React.FC<TaskProps> = ({
 
   // Handle verify task completion on blockchain
   const handleVerifyCompletion = async () => {
-    if (!activeAccount || !activeAccount.address) {
+    if (!activeAddress) {
       toast.error('Please connect your wallet first');
       return;
     }
@@ -68,10 +68,10 @@ const TaskCard: React.FC<TaskProps> = ({
       setTxStatus('pending');
 
       // Create transaction for task verification
-      const txn = await createTaskVerificationTxn(activeAccount.address, id);
+      const txn = await createTaskVerificationTxn(activeAddress, id);
       
       // Sign transaction with user's wallet
-      const signedTxn = await signTransaction(txn, activeAccount.address);
+      const signedTxn = await signTransaction(txn, activeAddress);
       
       // Submit and monitor transaction
       await submitAndMonitorTransaction(signedTxn, (update) => {
