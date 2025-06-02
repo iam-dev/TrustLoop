@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({
     <header className="bg-white border-b border-surface-200 sticky top-0 z-10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/\" className="flex items-center space-x-2">
             <div className="h-10 w-10 rounded-lg bg-primary-700 flex items-center justify-center">
               <Award className="h-6 w-6 text-white" />
             </div>
@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({
           <Button 
             variant="outline" 
             size="sm" 
-            leftIcon={<Crown className="text-warning-500" size={16} />}
+            leftIcon={<Crown className="text-warning-500\" size={16} />}
             className="hidden sm:flex"
           >
             Upgrade to Premium
