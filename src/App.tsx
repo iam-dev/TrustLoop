@@ -4,6 +4,10 @@ import Header from './components/Header';
 import BoltBanner from './components/BoltBanner';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
+import Marketplace from './pages/Marketplace';
+import Rewards from './pages/Rewards';
+import Leaderboard from './pages/Leaderboard';
+import Profile from './pages/Profile';
 import useAuthStore from './store/useAuthStore';
 
 function App() {
@@ -44,14 +48,28 @@ function App() {
               element={<Dashboard isConnected={isConnected} address={address} />} 
             />
             <Route 
+              path="/marketplace" 
+              element={
+                isConnected ? <Marketplace /> : <Navigate to="/" />
+              } 
+            />
+            <Route 
               path="/rewards" 
               element={
-                isConnected ? <div className="container mx-auto p-8">Rewards Page (Coming Soon)</div> : <Navigate to="/" />
+                isConnected ? <Rewards /> : <Navigate to="/" />
               } 
             />
             <Route 
               path="/leaderboard" 
-              element={<div className="container mx-auto p-8">Leaderboard Page (Coming Soon)</div>} 
+              element={<Leaderboard />} 
+            />
+            <Route 
+              path="/profile" 
+              element={isConnected ? <Profile /> : <Navigate to="/" />} 
+            />
+            <Route 
+              path="/profile/:walletAddress" 
+              element={<Profile />} 
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
