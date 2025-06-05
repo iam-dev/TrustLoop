@@ -4,9 +4,9 @@ import { CONTRACT_IDS } from './contracts';
 
 // Create a connection to the Algorand node
 const algodClient = new algosdk.Algodv2(
-  process.env.ALGORAND_API_TOKEN || '',
-  process.env.ALGORAND_NODE_URL || 'https://testnet-api.algonode.cloud',
-  process.env.ALGORAND_NODE_PORT || ''
+  import.meta.env.VITE_ALGORAND_API_TOKEN || '',
+  import.meta.env.VITE_ALGORAND_NODE_URL || 'https://testnet-api.algonode.cloud',
+  import.meta.env.VITE_ALGORAND_NODE_PORT || ''
 );
 
 // Define a shorter timeout for transaction operations
