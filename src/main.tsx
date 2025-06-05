@@ -1,19 +1,20 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { WalletProvider, PROVIDER_ID, NetworkId } from '@txnlab/use-wallet-react';
+import { WalletProvider } from '@txnlab/use-wallet-react';
+import { WalletId, NetworkId } from '@txnlab/use-wallet';
 import { DeflyWalletConnect } from '@blockshake/defly-connect';
 import { PeraWalletConnect } from '@perawallet/connect';
 import App from './App.tsx';
 import './index.css';
 
 const walletProviders = {
-  [PROVIDER_ID.DEFLY]: {
-    id: PROVIDER_ID.DEFLY,
+  [WalletId.DEFLY]: {
+    id: WalletId.DEFLY,
     name: 'Defly Wallet',
     connect: async () => new DeflyWalletConnect(),
   },
-  [PROVIDER_ID.PERA]: {
-    id: PROVIDER_ID.PERA,
+  [WalletId.PERA]: {
+    id: WalletId.PERA,
     name: 'Pera Wallet',
     connect: async () => new PeraWalletConnect(),
   },
