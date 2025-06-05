@@ -12,7 +12,8 @@ import Badge from './ui/Badge';
 import Button from './ui/Button';
 import { createTaskVerificationTxn, signTransaction, submitAndMonitorTransaction, TransactionStatus } from '../lib/transactionUtils';
 import { toast } from '../lib/toast';
-import { useWallet } from '@txnlab/use-wallet';
+import { useWalletContext } from '@txnlab/use-wallet';
+
 
 export interface TaskProps {
   id: string;
@@ -43,7 +44,7 @@ const TaskCard: React.FC<TaskProps> = ({
 }) => {
   const [txStatus, setTxStatus] = useState<TransactionStatus | null>(null);
   const [loading, setLoading] = useState(false);
-  const { activeAccount } = useWallet();
+  const { activeAccount } = useWalletContext();
   const taskIcons = {
     video: <Play size={18} className="text-primary-600" />,
     meme: <span className="text-xl">🎭</span>,
