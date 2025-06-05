@@ -14,7 +14,6 @@ import { createTaskVerificationTxn, signTransaction, submitAndMonitorTransaction
 import { toast } from '../lib/toast';
 import { useWalletContext } from '@txnlab/use-wallet';
 
-
 export interface TaskProps {
   id: string;
   title: string;
